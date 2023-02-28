@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Chat with Flask (Alpine.js front-end)</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/favicon.svg">
+</head>
+<body>
+    <div id="app" class="width-container" x-data="chat">
+        <div id="messages" class="pad-05">
+            <template x-for="item in messages">
+                <div class="message-item" :my-message="item.sender == username">
+                    <div class="margin-b-05">
+                        <b @click="()=>senderUsernameClick(item.sender)" x-text="item.sender"></b>&emsp;<i x-text="item.time"></i></div>
+                    <div x-text="item.text"></div>
+                </div>
+            </template>
+        </div>
+        <div x-show="loggedin" class="flex-stripe pad-05">
+            <input x-model="message" placeholder="message" class="input flex-grow">
+            <div class="button button-primary" @click="sendButtonClick">send</div>
+        </div>
+        <div x-show="!loggedin && challenged" class="flex-stripe pad-05">
+            <div x-text="'Token for '+username"></div>
+            <input type="password" x-model="token" class="input flex-grow" placeholder="from prev. session">
+            <div class="button button-primary" @click="confirmJoinButtonClick">join</div>
+            <div class="button button-secondary" @click="cancelJoinButtonClick">go back</div>
+        </div>
+        <div x-show="!(loggedin || challenged)" class="flex-stripe pad-05">
+            <div>Username:</div>
+            <input x-model="username" class="input flex-grow" placeholder="username">
+            <div class="button button-primary" @click="joinButtonClick">join</div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script type="text/javascript">
+    let socket = io() // magic 
+
+    const clicksToRevealToken = 4
+
+    let chat = {
+        username: "",
+        loggedin: false,
+        challenged: false,
+        usernameClickCount: 0,
+        showToken: false,
+        token: "",
+        message: "",
+        messages: [],
+        joinButtonClick() {
+            socket.emit("chat:join", this.username)
+        },
+        confirmJoinButtonClick() {
+            socket.emit("chat:join", this.username, this.token)
+        },
+        cancelJoinButtonClick() {
+            this.loggedin = false
+            this.username = ""
+            this.challenged = false
+        },
+        sendButtonClick() {
+            socket.emit("chat:message", this.username, this.token, this.message)
+            this.message = ""
+            let msgsElement = document.querySelector("#messages")
+            setTimeout(() => {
+                msgsElement.scrollTop = msgsElement.scrollHeight
+            }, 100)
+        },
+        senderUsernameClick(username) {
+            if (username == this.username) { 
+                this.usernameClickCount++
+                if (this.usernameClickCount % clicksToRevealToken == 0) {
+                    this.revealToken()
+                }
+            }
+        },
+        revealToken() {
+            if (window.confirm("Do you want to see your token to use it for next login?")) {
+                window.alert("Your token:  "+this.token)
+            }
+        },
+        init() {
+            socket.on("chat:challenge", () => {
+                this.challenged = true
+            })
+            socket.on("chat:confirm-join", (username, token) => {
+                this.loggedin = true
+                this.challenged = false
+                this.username = username
+                this.token = token
+            })
+            socket.on("chat:broadcast", (message) => {
+                this.messages.push(message)         
+            })
+            socket.on("chat:error", (message) => {
+                console.error(message)
+            })
+        }
+    }
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data("chat", () => chat)
+    })
+    </script>
+</body>
+</html>

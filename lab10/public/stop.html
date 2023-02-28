@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Stop chat</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/favicon.svg">
+</head>
+<body>
+    <div id="app" class="width-container">
+        <div class="pad-05">
+            Can you stop the unstoppable?
+        </div>
+        <div v-if="alive" class="flex-stripe pad-05">
+            <div>Password</div>
+            <input type="password" v-model="password" class="input flex-grow">
+            <div class="button button-primary" @click="stopButtonClick">Stop chat</div>
+        </div>
+        <div v-else class="pad-05">
+            Chat should be stopped by now. Check the console.
+        </div>
+    </div>
+    <script src="https://unpkg.com/axios"></script>
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="/chat.stop.js" type="text/javascript"></script>
+</body>
+</html>
