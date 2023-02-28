@@ -1,0 +1,14 @@
+{
+    "name": "lab06",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "main": "node main.js"
+    },
+    "dependencies": {
+        "getfile": "file:getfile",
+        "logger": "file:logger",
+        "string": "^3.3.3",
+        "validator": "^13.9.0"
+    }
+}

@@ -1,0 +1,87 @@
+* {
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Noto Mono", "Consolas", monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-fore);
+    background-color: var(--color-back);
+
+    --color-fore: #404040;
+    --color-accent: #202020;
+    --color-back: #ffffff;
+    --color-back-hover: #f9f9f9;
+    --color-back-active: var(--color-back-hover);
+    --color-gray: #bbbbbb;
+}
+.width-container {
+    width: 720px;
+    max-width: 100%;
+    margin: auto;
+}
+.flex-stripe {
+    display: flex; 
+    column-gap: 0.5rem;
+    align-items: flex-end;
+}
+.flex-grow {
+    flex-grow: 1;
+}
+.button {
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 2rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.button-primary {
+    background-color: var(--color-accent);
+    color: var(--color-back);
+}
+.pad-05 {
+    padding: 0.5rem;
+}
+.margin-b-05 {
+    margin-bottom: 0.5rem;
+}
+.margin-2 {
+    margin: 2rem auto;
+}
+input.input {
+    appearance: none;
+    font: inherit;
+    line-height: 1.25;
+    padding: 1px 2px;
+    border: none;
+    outline: none;
+    border-radius: 0px;
+    border-bottom: 2px solid var(--color-gray);
+}
+.input input:focus {
+    border-bottom-color: var(--color-accent-active);
+}
+.clickable-item:hover {
+    background-color: var(--color-back-hover);
+    text-decoration: underline;
+}
+b, h1, h2, h3, h4, h5, h6 {
+    line-height: 1.5
+    color: var(--color-accent);
+}
+.indent-1 {
+    padding-left: 1rem;
+}
+.message-item {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-gray);
+    border-radius: 2px;
+    margin: 1rem auto;
+}
+#messages {
+    height: 75vh;
+    overflow: scroll;
+    margin-bottom: 3rem;
+}

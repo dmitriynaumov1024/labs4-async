@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Weather</title>
+<script src="https://unpkg.com/vue@2"></script>
+<script src="https://unpkg.com/axios"></script>
+<style>
+* {
+    margin: 0; 
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Noto Mono", "Consolas", monospace;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-fore);
+    background-color: var(--color-back);
+
+    --color-fore: #404040;
+    --color-accent: #202020;
+    --color-back: #ffffff;
+    --color-back-hover: #f9f9f9;
+    --color-back-active: var(--color-back-hover);
+    --color-gray: #bbbbbb;
+}
+.width-container {
+    width: 720px;
+    max-width: 100%;
+    margin: auto;
+}
+.flex-stripe {
+    display: flex; 
+    column-gap: 0.5rem;
+    align-items: flex-end;
+}
+.flex-grow {
+    flex-grow: 1;
+}
+.button {
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 2rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.button-primary {
+    background-color: var(--color-accent);
+    color: var(--color-back);
+}
+.pad-05 {
+    padding: 0.5rem;
+}
+.margin-2 {
+    margin: 2rem auto;
+}
+.input label {
+    font-size: 0.75rem;
+    padding: 0 2px;
+}
+.input input {
+    appearance: none;
+    font: inherit;
+    line-height: 1.25;
+    padding: 1px 2px;
+    border: none;
+    outline: none;
+    border-radius: 0px;
+    border-bottom: 2px solid var(--color-gray);
+}
+.input input:focus {
+    border-bottom-color: var(--color-accent-active);
+}
+.clickable-item:hover {
+    background-color: var(--color-back-hover);
+    text-decoration: underline;
+}
+b, h1, h2, h3, h4 {
+    color: var(--color-accent);
+}
+.indent-1 {
+    padding-left: 1rem;
+}
+</style>
+</head>
+<body>
+    <main id="app" class="width-container">
+        <div class="flex-stripe margin-2">
+            <div class="input flex-grow">
+                <label for="city-input">City</label>
+                <input v-model="city" id="city-input" placeholder="city" />
+            </div>
+            <div class="input flex-grow">
+                <label for="country-input">Country code</label>
+                <input v-model="country" id="country-input" placeholder="country code" />
+            </div>
+            <div class="button button-primary" @click="getWeatherButtonClick">Get weather</div>
+        </div>
+        <div v-if="weather" class="margin-2">
+            <div><b>Weather in {{weather.city}}, {{weather.country}}</b></div>
+            <div class="indent-1">
+                <div>Description: {{weather.description}}</div>
+                <div>Temperature: {{weather.temperature_c}}°C</div>
+                <div>Wind: {{weather.wind_ms}} m/s</div>
+                <div>Humidity: {{weather.humidity}}%</div>
+                <div>Clouds: {{weather.clouds}}%</div>
+            </div>
+        </div>
+        <div v-else-if="errorMessage" class="margin-2">
+            <div><b>Error</b></div>
+            <div class="indent-1">
+                <div>{{errorMessage}}</div>
+            </div>
+        </div>
+        <div v-if="history?.length" class="margin-2">
+            <div><b>History</b></div>
+            <div class="indent-1">
+                <div class="clickable-item" v-for="item of history" @click="()=>historyItemClick(item)">
+                    {{item.city}}, {{item.country}}
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+    let app = new Vue({
+        el: "#app",
+        data: {
+            history: [],
+            weather: undefined,
+            errorMessage: undefined, 
+            city: "",
+            country: ""
+        },
+        mounted() {
+            axios({
+                method: "GET",
+                url: "/history.json"
+            })
+            .then(response => {
+                if (response.data) this.history = response.data
+            })
+            .catch(() => {})
+        },
+        methods: {
+            getWeather() {
+                if (!this.city || !this.country) return
+                let cityCountry = { 
+                    city: this.city,
+                    country: this.country
+                }
+                axios({
+                    method: "GET",
+                    url: "weather.json",
+                    params: cityCountry
+                })
+                .then(response => {
+                    if (response.data) {
+                        this.weather = response.data
+                        this.historyEntry(cityCountry)
+                    }
+                })
+                .catch(error => {
+                    this.weather = undefined
+                    this.errorMessage = error.response?.data?.message ?? "Something went wrong"
+                })
+            },
+            historyEntry(entry) {
+                let oldHistory = this.history
+                    .filter(e => !(e.city == entry.city && e.country == entry.country))
+                this.history = [entry, ...oldHistory].slice(0, 10)
+            },
+            historyItemClick(item) {
+                this.city = item.city
+                this.country = item.country
+                this.getWeather()
+            },
+            getWeatherButtonClick() {
+                this.getWeather()
+            }
+        }
+    })
+    </script>
+</body>

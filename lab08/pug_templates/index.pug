@@ -1,0 +1,23 @@
+doctype html 
+html(lang="en")
+    head
+        title Chat (jade template)
+        link(rel="stylesheet", href="/style.css")
+    body
+        div.width-container#app
+            div.pad-05#messages
+                div.message-item(v-for="item of messages")
+                    div.margin-b-05
+                        b {{item.sender}}&emsp;
+                        i {{item.time}}
+                    div {{item.text}}
+            div.flex-stripe.pad-05(v-if="loggedin")
+                input.input.flex-grow(v-model="message", placeholder="message")
+                div.button.button-primary(@click="sendButtonClick") send
+            div.flex-stripe.pad-05(v-else)
+                div Username
+                input.input.flex-grow(v-model="username", placeholder="username")
+                div.button.button-primary(@click="joinButtonClick") join
+        script(src="https://unpkg.com/vue@2")
+        script(src="/socket.io/socket.io.js")
+        script(src="/chat.client.js")

@@ -1,0 +1,18 @@
+weather
+
+- / => index.html
+  
+- /weather.json?city={city}&country={country} => {
+    city: String,
+    country: String,
+    description: String,
+    temperature_c: Number,
+    wind_ms: Number,
+    humidity: Number,
+    clouds: Number
+}
+  
+- /history.json => [{ 
+    city: String, 
+    country: String 
+}]

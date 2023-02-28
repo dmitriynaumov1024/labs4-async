@@ -1,0 +1,5 @@
+Message {
+    sender: String,
+    time: String,
+    text: String
+}
