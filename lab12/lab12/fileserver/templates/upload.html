@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload a file</title>
+<style>
+body {
+    font-size: 18px;
+    line-height: 1.5;
+    font-family: "Arimo", "Arial", sans-serif;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+.width-container {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+}
+.pad-1 {
+    padding: 1rem;
+}
+form>* {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.25rem;
+    font: inherit;
+    line-height: inherit;
+    outline: none;
+}
+</style>
+</head>
+<body>
+    <div class="width-container pad-1">
+        <h2>Завантажити новий файл</h2>
+        <form enctype="multipart/form-data" method="post" action="upload_file">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit">Upload!</button>
+        </form>
+    </div>
+    <div class="width-container pad-1">
+        <p><a href="/">На головну сторінку</a></p>
+    </div>
+</body>
+</html>
